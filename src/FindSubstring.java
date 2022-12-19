@@ -1,64 +1,47 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FindSubstring {
-    public void combineWord(String[] words, List<String> result, ArrayList<List<String>> resultList)
-    {
-        if(result.size() == words.length)
-        {
-            resultList.add(result);
-
-        }
-
-        for (int i = 0; i < words.length; i++)
-        {
-
-            if (result.contains(words[i]))
-            {
-                continue;
-            }
-
-            result.add(words[i]);
-            combineWord(words, result, resultList);
-            //resultList.remove(resultList.size() - 1);
-        }
-        return;
-    }
-
     public List<Integer> findSubstring(String s, String[] words) {
-        ArrayList<List<String>> list1 = new ArrayList<List<String>>();
-        ArrayList<String> listWords = new ArrayList<String>();
+        int count = 0;
+        HashMap<String,Integer> map = new HashMap<String,Integer>();
+
         List<Integer> result = new ArrayList<Integer>();
-        String newWord = "";
         int newLength = words[0].length();
         int wordLength = words.length;
-        combineWord(words, new ArrayList<String>(), list1);
-        System.out.println(list1);
 
-        for (int i=0; i < words.length; i++)
+        //Create a dictionary to store the occurrence of words
+        for (String word1: words)
         {
-            for(int j = 0; j < words.length && j !=i; j++)
-            {
-                newWord = words[i].concat(words[j]);
-                listWords.add(newWord);
-                newWord = words[j].concat(words[i]);
-                listWords.add(newWord);
-            }
+            map.merge(word1,1,Integer::sum);
         }
 
-        System.out.println(listWords);
-        for (int i = 0; i < s.length(); i++)
+
+        System.out.println(map);
+
+        for (int i = 0; i <= s.length() - newLength*wordLength; i++)
         {
-            if (i+newLength*wordLength < s.length())
+            count = 0;
+            HashMap<String,Integer> map2 = new HashMap<String,Integer>(map);
+            //Check the word for every j leap
+            for (int j = i; j < i + newLength*wordLength; j+=newLength)
             {
-                if(listWords.contains(s.substring(i,i+newLength*wordLength)))
+                //If word is found in j leap, substract its value by 1 in the dictionary
+                if (map2.getOrDefault(s.substring(j,j+newLength), 0) != 0)
                 {
-                    result.add(i);
+                    int currentCount = map2.get(s.substring(j,j+newLength)) - 1;
+                    map2.put(s.substring(j,j+newLength), currentCount);
+                    count += 1;
                 }
             }
 
+            if (count == words.length)
+            {
+                result.add(i);
+            }
         }
-        System.out.println(result);
+
         return result;
     }
 }
