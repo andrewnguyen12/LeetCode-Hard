@@ -17,7 +17,6 @@ public class FindSubstring {
             map.merge(word1,1,Integer::sum);
         }
 
-
         System.out.println(map);
 
         for (int i = 0; i <= s.length() - newLength*wordLength; i++)
